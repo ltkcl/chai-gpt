@@ -4,6 +4,9 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/provider/theme-provider";
 import { QueryProvider } from "@/components/provider/query-provider";
+import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import { mkdir } from "fs";
+
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-sans' });
 
 const geistSans = Geist({
@@ -32,6 +35,7 @@ export default function RootLayout({
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", outfit.variable)}
      suppressHydrationWarning>      
       <body className="min-h-full flex flex-col">
+        <ClerkProvider>
         <QueryProvider>
           <ThemeProvider
         attribute="class"
@@ -41,6 +45,7 @@ export default function RootLayout({
       >        {children}
       </ThemeProvider>
         </QueryProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
