@@ -36,14 +36,7 @@ export async function POST(req: Request){
     const  result =   streamText({
          model : getChatModel(conversation.model),
          system : conversation.systemPrompt ?? "You are chaiGPT , a helpful assistant",
-          tools: {
-            search : tool({
-                description : "Search relevent information from the web ",
-                
-            }),
-         messages : await convertToModelMessages(messagesToSave),
-        
-         }       
+        messages : await convertToModelMessages(messagesToSave), 
     })
 
     result.consumeStream();    
