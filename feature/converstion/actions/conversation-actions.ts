@@ -2,26 +2,21 @@
 
 import { requireUser } from "@/feature/auth/action/require-user"
 import {prisma} from "@/lib/db"
-import { BlobOptions } from "buffer"
-import { assert } from "console"
-import { id } from "date-fns/locale"
-import { create } from "domain"
 import { revalidatePath } from "next/cache"
-import { title } from "process"
 
 export type ConversationListItem ={
-    id : String,
-    title : String,
+    id : string,
+    title : string,
     isPinned : boolean,
     isArchived : boolean,
     lastMessageAt : Date,
-    createAt :Date,
+    createdAt :Date,
     updatedAt : Date
 }
 
 export async function listConversations():Promise<ConversationListItem[]>{
     const user = await requireUser();
-    return prisma.Conversation.findMany({
+    return prisma.conversation.findMany({
         where : { userId : user.id , isArchived: false },
         orderBy : [{ isPinned : "desc" }, { lastMessageAt : "desc" }],
         select:{
@@ -30,7 +25,7 @@ export async function listConversations():Promise<ConversationListItem[]>{
             isPinned : true,
             isArchived : true,
             lastMessageAt : true,
-            createAt : true,
+            createdAt : true,
             updatedAt : true
         }
     })
@@ -46,7 +41,7 @@ export async function createConversation (title = "New Chat"){
     })
 }
 
-export async function assertOwnConversation( conversationId : String ,userId : String ){
+export async function assertOwnConversation( conversationId : string ,userId : string ){
     const conversation  = await prisma.conversation.findFirst({
         where:{
             id : conversationId,
@@ -73,7 +68,7 @@ export async function deleteConversation(conversationId : string){
 
 export async function updateConversation(
     conversationId: string ,
-    data : {title ?: String ;  isPinned?: boolean ; isArchived?: boolean }) {
+    data : {title ?: string ;  isPinned?: boolean ; isArchived?: boolean }) {
     const user  = await requireUser();
     await assertOwnConversation(conversationId,user.id);
 
@@ -81,7 +76,7 @@ export async function updateConversation(
         where :{ id: conversationId},
         data: {
             ...(data.title !== undefined ? {title: data.title.trim() || "New Chat" }:{}),
-            ...(data.isPinned !== undefined ? { isArchived : data.isArchived } : {}) ,
+            ...(data.isPinned !== undefined ? { isPinned: data.isPinned } : {}) ,
             ...(data.isArchived != undefined ? { isArchived: data.isArchived } : {} )
         },        
     })

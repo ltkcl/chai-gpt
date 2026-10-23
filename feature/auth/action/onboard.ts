@@ -10,17 +10,17 @@ export async function onBoard(){
         throw new Error("Unauthorised");
     }
     const email = clerkUser.emailAddresses[0]?.emailAddress ?? null;
-    return prisma.user.upsert({
+    console.log("Clerk User:", clerkUser);
+    return await prisma.user.upsert({
         where : {clerkId : clerkUser.id},
         create :{
             clerkId : clerkUser.id,
-            email,
+            email : email,
             firstname:clerkUser.firstName,
             lastname:clerkUser.lastName,
             imageurl:clerkUser.imageUrl
         },
-        update:{
-             email,
+        update:{ 
             firstname:clerkUser.firstName,
             lastname:clerkUser.lastName,
             imageurl:clerkUser.imageUrl
